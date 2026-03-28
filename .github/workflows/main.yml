@@ -1,0 +1,33 @@
+name: Deploy naar webserver
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '*.php'
+      - '*.css'
+      - '.htaccess'
+
+  # Handmatig triggeren via GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy via SCP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy bestanden naar server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 511778348.ssh.w1.strato.hosting
+          username: stu908800248
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "index.html public/icon-192.png public/icon-512.png public/icon.svg public/manifest.json public/sw.js package.json package-lock.json vite.config.js"
+          target: ${{ secrets.SSH_REMOTE_PATH }}
+          debug: true
+          strip_components: 0
